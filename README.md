@@ -55,7 +55,7 @@ LifecycleEventBus.sendEvent(LoginEvent("123456789"))
 
 ## ThreadMode
 The Observer's `onEvent()` is running on the thread which `LifecycleEventBus.sendEvent` is invoked by defalut.
-You can pass the ThreadMode as a param to `observer()` or `observeForever` to sprcify which thread the observer should run on.
+You can pass the ThreadMode as a param to `observer()` or `observeForever` to specify which thread the observer should run on.
 
 set ThradMode to `ThreadMode.MAIN` and the observer will run on main thread.
 ```kotlin

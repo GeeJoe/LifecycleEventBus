@@ -6,7 +6,7 @@ import android.os.Looper
 
 /**
  * Created by zhiyueli on 2021/5/26.
- * zhiyueli@tencent.com
+ * zhiyueli.dev@gmail.com
  */
 object ThreadManager {
 

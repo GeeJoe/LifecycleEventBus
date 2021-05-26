@@ -3,7 +3,7 @@ package com.geejoe.lifecycleeventbus
 
 /**
  * Created by zhiyueli on 2021/5/26.
- * zhiyueli@tencent.com
+ * zhiyueli.dev@gmail.com
  *
  * 线程模式
  *
