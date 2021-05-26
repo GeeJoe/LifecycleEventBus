@@ -4,30 +4,32 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.geejoe.lifecycleeventbus.EventObserver
 import com.geejoe.lifecycleeventbus.LifecycleEventBus
+import com.geejoe.lifecycleeventbus.ThreadMode
+import java.util.concurrent.Executors
 
 class MainActivity : AppCompatActivity() {
 
-    private val observer = object : EventObserver<LoginEvent> {
-        override fun onEvent(event: LoginEvent) {
-            // handle event
-        }
-    }
+    private val threadPool = Executors.newFixedThreadPool(10)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        LifecycleEventBus.observe(this, LoginEvent::class.java, object : EventObserver<LoginEvent> {
+        val observerSubThread = object : EventObserver<LoginEvent> {
             override fun onEvent(event: LoginEvent) {
-                // handle event
+                println("onEvent --> ${Thread.currentThread()} $event")
             }
-        })
+        }
+        val observerMainThread = object : EventObserver<LoginEvent> {
+            override fun onEvent(event: LoginEvent) {
+                println("onEvent --> ${Thread.currentThread()} $event")
+            }
+        }
+        LifecycleEventBus.observe(this, LoginEvent::class.java, observerSubThread)
+        LifecycleEventBus.observe(this, LoginEvent::class.java, observerMainThread, ThreadMode.MAIN)
 
-        LifecycleEventBus.observeForever(LoginEvent::class.java, observer)
-        LifecycleEventBus.sendEvent(LoginEvent("123456789"))
+        threadPool.execute {
+            LifecycleEventBus.sendEvent(LoginEvent("hello"))
+        }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        LifecycleEventBus.removeObserver(observer)
-    }
 }

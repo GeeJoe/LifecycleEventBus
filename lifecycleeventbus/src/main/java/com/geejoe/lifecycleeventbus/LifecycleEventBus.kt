@@ -35,7 +35,7 @@ object LifecycleEventBus {
     fun <T : EVENT> sendEvent(event: T) {
         val eventType = event::class.java
         observerMap[eventType]?.forEach { (_, wrapper) ->
-            wrapper.observer.dispatchEvent(event)
+            wrapper.observer.dispatchEvent(event, wrapper.threadMode)
         }
     }
 
@@ -49,20 +49,17 @@ object LifecycleEventBus {
      * @param owner: 生命周期 owner，可以是 Activity/Fragment
      * @param eventType: 事件类型，只有发送相同类型的事件才能够被接收到
      * @param observer: 监听者，在这里处理接收到事件的逻辑
-     *
-     * **注：**
-     * ！！Observer 的回调函数将运行在发送事件 [sendEvent] 所在的线程中！！
-     * ！！该方法必须在主线程调用！！
-     *
-     * TODO(支持将 Observer 回调函数切换到指定线程)
-     * TODO(支持任意线程调用 observe 方法)
+     * @param threadMode: 指定 observer 运行在那个线程，详见 [ThreadMode], 默认为 [ThreadMode.ORIGIN]
      */
     fun <T : EVENT> observe(
         owner: LifecycleOwner,
         eventType: Class<T>,
-        observer: EventObserver<T>
+        observer: EventObserver<T>,
+        threadMode: ThreadMode = ThreadMode.ORIGIN
     ) {
-        addObserver(eventType, LifecycleBoundObserver(owner, observer))
+        ThreadManager.runOnMainThread {
+            addObserver(eventType, LifecycleBoundObserver(owner, observer, threadMode))
+        }
     }
 
     /**
@@ -70,11 +67,16 @@ object LifecycleEventBus {
      *
      * 使用该方法注册的 observer 将在整个应用进程期间存在，必要的时候需要手动调用 [removeObserver] 移除监听
      *
+     * @param threadMode: 指定 observer 运行在那个线程，详见 [ThreadMode], 默认为 [ThreadMode.ORIGIN]
      * @param eventType: 事件类型，只有发送相同类型的事件才能够被接收到
      * @param observer: 监听者，在这里处理接收到事件的逻辑
      */
-    fun <T : EVENT> observeForever(eventType: Class<T>, observer: EventObserver<T>) {
-        addObserver(eventType, ObserverWrapper(observer))
+    fun <T : EVENT> observeForever(
+        eventType: Class<T>,
+        observer: EventObserver<T>,
+        threadMode: ThreadMode = ThreadMode.ORIGIN
+    ) {
+        addObserver(eventType, ObserverWrapper(observer, threadMode))
     }
 
     /**
@@ -103,8 +105,9 @@ object LifecycleEventBus {
      */
     private class LifecycleBoundObserver(
         private val owner: LifecycleOwner,
-        observer: EventObserver<*>
-    ) : ObserverWrapper(observer), LifecycleEventObserver {
+        observer: EventObserver<*>,
+        threadMode: ThreadMode
+    ) : ObserverWrapper(observer, threadMode), LifecycleEventObserver {
 
         init {
             // 监听生命周期的变化
@@ -129,7 +132,7 @@ object LifecycleEventBus {
     /**
      * Observer 包装器，其子类 [LifecycleBoundObserver] 具备生命周期感知能力
      */
-    private open class ObserverWrapper(val observer: EventObserver<*>) {
+    private open class ObserverWrapper(val observer: EventObserver<*>, val threadMode: ThreadMode) {
         open fun detachObserver() {}
     }
 

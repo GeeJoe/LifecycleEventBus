@@ -12,8 +12,14 @@ interface EventObserver<T : EVENT> {
 }
 
 @Suppress("UNCHECKED_CAST")
-internal fun <T: EVENT> EventObserver<T>.dispatchEvent(event: EVENT) {
+internal fun <T : EVENT> EventObserver<T>.dispatchEvent(event: EVENT, threadMode: ThreadMode) {
     (event as? T)?.let {
-        onEvent(it)
+        if (threadMode == ThreadMode.MAIN) {
+            ThreadManager.runOnMainThread {
+                onEvent(it)
+            }
+        } else {
+            onEvent(it)
+        }
     }
 }
