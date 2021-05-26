@@ -1,5 +1,5 @@
 # LifecycleEventBus
-An EventBus that support Lifecycle. The observers can auto detach from the EventBus before the Lifecycle is going to destroy.
+An EventBus that support Lifecycle. The Lifecycle-Aware Observers can be auto detached from the EventBus before the Lifecycle is going to destroy.
 
 ## Use in 3 Steps
 ### Define events
