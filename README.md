@@ -1,3 +1,5 @@
+<img width="1448" alt="LifecycleEventBus_logo" src="https://user-images.githubusercontent.com/13412420/119670207-48609780-be6b-11eb-8eab-d14dfddd9a40.png">
+
 # LifecycleEventBus
 An EventBus that support Lifecycle. The Lifecycle-Aware Observers can be auto detached from the EventBus before the Lifecycle is going to destroy.
 
