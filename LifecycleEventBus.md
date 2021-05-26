@@ -1,6 +1,35 @@
-# 手把手教你如何用 100 行代码实现一个有生命周期感知能力的 EventBus
+## Overview
 
+- 支持绑定 Lifecycle，能够在生命周期 onDestroy 的时候自动移除监听，可与 Android Jetpack 中的 Lifecycle 组件无缝衔接
+- 支持监听者线程切换
+- 支持手动注册/反注册监听器
+- 代码精简，只有 100 行左右
 
+相比 EventBus/RxBus 优势：
+
+- EventBus 中事件分发采用反射，LifecycleEventBus 以接口形式回调，不存在反射
+- RxBus 依赖 RxJava，对包大小有影响，LifecycleEventBus 代码精简，只有 100 行左右
+- LifecycleEventBus 具备 EventBus 和 RxBus 没有的「生命周期感知能力」
+
+### Sample
+
+```kotlin
+// difine an event
+data class LoginEvent(val userId: String)
+// define an observer 
+val observer = object : EventObserver<LoginEvent> {
+            override fun onEvent(event: LoginEvent) {
+                println("onEvent --> $event")
+            }
+        }
+// add observer with lifecycleOwner.
+// the observer will be removed when lifecycle goes to destroy
+LifecycleEventBus.observe(this, LoginEvent::class.java, observer)
+// send event
+LifecycleEventBus.sendEvent(LoginEvent("12345"))
+```
+
+## 手把手教你如何用 100 行代码实现一个有生命周期感知能力的 EventBus
 
 事件总线是一个项目开发中必不可少的能力，市面上也有几个非常有名的事件库，比如 EventBus 以及基于 RxJava 的 RxBus 等
 
@@ -207,36 +236,6 @@ object ThreadManager {
 
 至此，一个完整的具备生命周期感知能力的 EventBus 就完成了，整体代码 100 左右，十分精简。源码详情请到 GitHub 自行查看：[LifecycleEventBus](https://github.com/GeeJoe/LifecycleEventBus)
 
-## Overview
-
-- 支持绑定 Lifecycle，能够在生命周期 onDestroy 的时候自动移除监听，可与 Android Jetpack 中的 Lifecycle 组件无缝衔接
-- 支持监听者线程切换
-- 支持手动注册/反注册监听器
-- 代码精简，只有 100 行左右
-
-相比 EventBus/RxBus 优势：
-
-- EventBus 中事件分发采用反射，LifecycleEventBus 以接口形式回调，不存在反射
-- RxBus 依赖 RxJava，对包大小有影响，LifecycleEventBus 代码精简，只有 100 行左右
-- LifecycleEventBus 具备 EventBus 和 RxBus 没有的「生命周期感知能力」
-
-### Sample
-
-```kotlin
-// difine an event
-data class LoginEvent(val userId: String)
-// define an observer 
-val observer = object : EventObserver<LoginEvent> {
-            override fun onEvent(event: LoginEvent) {
-                println("onEvent --> $event")
-            }
-        }
-// add observer with lifecycleOwner.
-// the observer will be removed when lifecycle goes to destroy
-LifecycleEventBus.observe(this, LoginEvent::class.java, observer)
-// send event
-LifecycleEventBus.sendEvent(LoginEvent("12345"))
-```
 
 
 
