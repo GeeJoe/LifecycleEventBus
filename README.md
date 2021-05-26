@@ -1,6 +1,8 @@
 # LifecycleEventBus
 An EventBus that support Lifecycle. The Lifecycle-Aware Observers can be auto detached from the EventBus before the Lifecycle is going to destroy.
 
+中文文档(CN)：[LifecycleEventBus.md](https://github.com/GeeJoe/LifecycleEventBus/blob/main/LifecycleEventBus.md)
+
 ## Use in 3 Steps
 ### 1. Define events
 Any object can be an event

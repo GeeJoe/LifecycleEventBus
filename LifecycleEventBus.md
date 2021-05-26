@@ -214,6 +214,12 @@ object ThreadManager {
 - 支持手动注册/反注册监听器
 - 代码精简，只有 100 行左右
 
+相比 EventBus/RxBus 优势：
+
+- EventBus 中事件分发采用反射，LifecycleEventBus 以接口形式回调，不存在反射
+- RxBus 依赖 RxJava，对包大小有影响，LifecycleEventBus 代码精简，只有 100 行左右
+- LifecycleEventBus 具备 EventBus 和 RxBus 没有的「生命周期感知能力」
+
 ### Sample
 
 ```kotlin
