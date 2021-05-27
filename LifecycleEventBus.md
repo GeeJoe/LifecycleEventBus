@@ -31,6 +31,8 @@ LifecycleEventBus.sendEvent(LoginEvent("12345"))
 
 ## 手把手教你如何用 100 行代码实现一个有生命周期感知能力的 EventBus
 
+掘金博客地址：[https://juejin.cn/post/6966584751977136141/](https://juejin.cn/post/6966584751977136141/)
+
 事件总线是一个项目开发中必不可少的能力，市面上也有几个非常有名的事件库，比如 EventBus 以及基于 RxJava 的 RxBus 等
 
 但是他们在使用的时候都必须要手动注册/反注册监听，我们能否实现一个不需要手动反注册的事件总线呢，换句话说，我们如何实现一个能够在生命周期 destroy 的时候自定解绑监听的事件总线呢
@@ -47,7 +49,7 @@ object LifecycleEventBus {
     fun <T : Any> observe(eventType: Class<T>, observer: EventObserver<T>) {}
   
   	// 移除监听
-    fun <T : EVENT> removeObserver(observer: EventObserver<T>) {}
+    fun <T : Any> removeObserver(observer: EventObserver<T>) {}
   
   	// 发送事件
   	fun <T: Any> sendEvent(event: T) {}
